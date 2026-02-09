@@ -1,13 +1,10 @@
-# Stage 1: Build the Vite project
-FROM node:20 AS build-stage
-WORKDIR /app
-COPY package*.json ./
-RUN npm install --legacy-peer-deps
-COPY . .
-RUN npm run build
+FROM nginx:alpine
 
-# Stage 2: Serve the app using Nginx 
-FROM nginx:stable-alpine
-COPY --from=build-stage /app/dist /usr/share/nginx/html
+# ADD THIS LINE: It cleans out the default Nginx 'Welcome' files 
+# before your portfolio files are copied in.
+RUN rm -rf /usr/share/nginx/html/*
+
+# The existing copy command
+COPY . /usr/share/nginx/html
+
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
