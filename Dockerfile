@@ -1,16 +1,17 @@
-# Stage 1: The "Baker" (Node.js)
+# Stage 1: The Baker
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY . .
-# Install dependencies and build the project
-RUN npm install
+
+# ADD THE FLAG HERE to bypass the version conflict
+RUN npm install --legacy-peer-deps
+
 RUN npm run build
 
-# Stage 2: The "Waiter" (Nginx)
+# Stage 2: The Waiter
 FROM nginx:alpine
 RUN rm -rf /usr/share/nginx/html/*
-# ONLY copy the 'Cake' (the dist folder) from the Baker stage
-# Note: If your build folder is named 'build' instead of 'dist', change it below
+# Make sure your project build folder is named 'dist' (Vite's default)
 COPY --from=builder /app/dist /usr/share/nginx/html
 
 EXPOSE 80
