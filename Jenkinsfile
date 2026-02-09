@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/your-username/devops-portfolio.git'
+                git 'https://github.com/swamyboraiahagari/devops-portfolio.git'
             }
         }
         stage('Build Docker Image') {
