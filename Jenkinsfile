@@ -25,7 +25,7 @@ pipeline {
                     sh 'docker stop portfolio-site || true'
                     sh 'docker rm portfolio-site || true'
                     // Start the new container on Port 81
-                    sh 'docker run -d --name portfolio-site -p 81:80 my-portfolio:latest'
+                    sh 'docker run -d --name portfolio-site -p 80:80 my-portfolio:latest'
                 }
             }
         }
