@@ -1,40 +1,32 @@
 pipeline {
     agent any
-
+    
     stages {
         stage('Checkout') {
             steps {
-                // Using 'checkout scm' automatically finds the right branch (main) and URL
                 checkout scm
             }
         }
-
+        
         stage('Build Docker Image') {
             steps {
-                script {
-                    // Builds your image
-                    sh 'docker build -t my-portfolio:latest .'
-                }
+                // We use --no-cache to ensure your changes always show up
+                sh 'docker build --no-cache -t my-portfolio:latest .'
             }
         }
-
+        
         stage('Deploy Container') {
             steps {
                 script {
-                    // Stop and remove old container if it exists
+                    // 1. Stop and remove the old container if it exists
+                    // The "|| true" prevents the pipeline from failing if the container isn't running
                     sh 'docker stop portfolio-site || true'
                     sh 'docker rm portfolio-site || true'
-                    // Start the new container on Port 81
-                    sh 'docker run -d --name portfolio-site -p 80:80 my-portfolio:latest'
+                    
+                    // 2. Start the new container with the correct port mapping
+                    sh 'docker run -d --name portfolio-site -p 80:3000 my-portfolio:latest'
                 }
             }
-        }
-    }
-
-    post {
-        always {
-            // Clean up unused images to keep the EC2 healthy
-            sh 'docker image prune -f'
         }
     }
 }
