@@ -1,18 +1,24 @@
-# Stage 1: The Baker
-FROM node:20-alpine AS builder
+FROM node:20-alpine
 WORKDIR /app
+
+# 1. Install pnpm (since your project uses it)
+RUN npm install -g pnpm
+
+# 2. Copy dependency files
+COPY package.json pnpm-lock.yaml* ./
+
+# 3. Install dependencies
+RUN pnpm install --no-frozen-lockfile
+
+# 4. Copy the rest of the code
 COPY . .
 
-# ADD THE FLAG HERE to bypass the version conflict
-RUN npm install --legacy-peer-deps
+# 5. Build the project
+RUN pnpm run build
 
-RUN npm run build
+# 6. Expose the port (Your server likely runs on 5000 or 3000, 
+# but we will map it to 80 in the docker run command)
+EXPOSE 5000
 
-# Stage 2: The Waiter
-FROM nginx:alpine
-RUN rm -rf /usr/share/nginx/html/*
-# Make sure your project build folder is named 'dist' (Vite's default)
-COPY --from=builder /app/dist /usr/share/nginx/html
-
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+# 7. Start the Node.js server
+CMD ["pnpm", "start"]
