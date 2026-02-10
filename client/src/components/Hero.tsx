@@ -56,7 +56,7 @@ export default function Hero() {
           {/* Main Heading */}
           <div className="space-y-2">
             <h1 className="text-5xl md:text-6xl font-bold leading-tight">
-              Cloud DevOps
+               DevOps
               <br />
               <span className="gradient-text">Engineer</span>
             </h1>
